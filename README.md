@@ -53,4 +53,29 @@ create a pair of public/private keys, and update **docker-compose.yml** to build
       - net
 ```
 
+Now, you login to jenkins container and try to SSH to remote host, you would be able to connect to the **remote-host** container with password. 
+```
+jenkins@1a93d438c071:~$ ssh remote_user@remote-host
+The authenticity of host 'remote-host (172.18.0.2)' can't be established.
+ECDSA key fingerprint is SHA256:a8xE286YL6MoUg50rd3giV7De6vs74WcFKGiNeE5Khk.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added 'remote-host' (ECDSA) to the list of known hosts.
+remote_user@remote-host's password:
+Last login: Wed May 19 05:33:06 2021 from jenkins.jenkins-data_net
+[remote_user@ab606f56c931 ~]$
+```
 
+Copy the private key of the **remote-host** container to **jenkins** container and using the private key you would be able to connect without password. 
+
+```
+cd centos7
+docker cp remote-key jenkins:/var/jenkins_home
+
+jenkins@1a93d438c071:~$ ssh -i remote-key remote_user@remote-host
+Last login: Wed May 19 05:37:50 2021 from jenkins.jenkins-data_net
+[remote_user@ab606f56c931 ~]$
+```
+
+Now, create a new project and enable SSH plugin and you can create build steps to run to remote machine/container. 
+
+### Jenkins for ansible plays && execute ansible playbooks
