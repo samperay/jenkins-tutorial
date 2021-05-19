@@ -106,9 +106,22 @@ Write your playbooks in the folder **/var/jenkins_home/ansible** and try to exec
 emote_host.
 
 ```
+---
+- hosts: test1
+  tasks:
+    - shell: echo "Hello world" > /tmp/ansible.txt
+```
+
+```
 ansible-playbook -i hosts play.yml
 ```
 
-Now, you would install plugins for **ansible** and **ansicolor** from the Jenkins and restart. Create a new project and provide the playbook path as **/var/jenkins_home/ansible/play.yml** and host file(inventory) as **/var/jenkins_home/ansible/hosts**. checkout the color output and you can parametrize the playbooks if you need to. 
+Now, you would install plugins for **ansible** and **ansicolor** from the Jenkins and restart. Create a new project and provide the playbook path as **/var/jenkins_home/ansible/play.yml** and host file(inventory) as **/var/jenkins_home/ansible/hosts**. checkout the color output and you can parametrize(MSG) the playbooks if you need to. 
 
+```
+- hosts: test1
+  tasks:
+    - debug:
+        msg: "{{ MSG }}" 
+```
 
