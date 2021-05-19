@@ -79,3 +79,36 @@ Last login: Wed May 19 05:37:50 2021 from jenkins.jenkins-data_net
 Now, create a new project and enable SSH plugin and you can create build steps to run to remote machine/container. 
 
 ### Jenkins for ansible plays && execute ansible playbooks
+
+Now, you have an **jenkins** container, but you don't have an ansible installed.. Hence we would create a new directory **jenkins-ansible** which uses the **jenkins/jenkins** as an image and would install ansible using pip modules. 
+
+```
+FROM jenkins/jenkins
+
+USER root
+
+RUN apt-get update && apt-get install python3-pip -y && \
+    pip3 install ansible --upgrade
+
+USER jenkins
+```
+
+When you now login to your jenkins container, you would have ansible binary installed. You, would now like to run the playbook on the host **remote-host** so you need to configure the ansible inventory. since we already know that the jenkins host **jenkins_home** is mounted on the **/var/jenkins_home** of the container, I would configure the host and inventory detail of the remote_host.
+
+```
+mkdir jenkins_home/ansible
+docker cp remote-key jenkins:/var/jenkins_home/ansible
+docker cp remote-key.pub jenkins:/var/jenkins_home/ansible
+docker cp hosts jenkins:/var/jenkins_home/ansible
+```
+
+Write your playbooks in the folder **/var/jenkins_home/ansible** and try to execute from the jenkins container by specifying the inventory file(hosts) and see if its connecting to the r
+emote_host.
+
+```
+ansible-playbook -i hosts play.yml
+```
+
+Now, you would install plugins for **ansible** and **ansicolor** from the Jenkins and restart. Create a new project and provide the playbook path as **/var/jenkins_home/ansible/play.yml** and host file(inventory) as **/var/jenkins_home/ansible/hosts**. checkout the color output and you can parametrize the playbooks if you need to. 
+
+
