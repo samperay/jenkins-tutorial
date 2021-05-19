@@ -161,7 +161,7 @@ Query OK, 1 row affected (0.00 sec)
 
 mysql> use people;
 Database changed
-mysql> create table register(id int(3), name varchar(50), lastname varchar(50));
+mysql> create table register(id int(3), name varchar(50), lastname varchar(50), age int(3));
 Query OK, 0 rows affected (0.05 sec)
 mysql>
 
@@ -172,6 +172,67 @@ mysql> desc register;
 | id       | int(3)      | YES  |     | NULL    |       |
 | name     | varchar(50) | YES  |     | NULL    |       |
 | lastname | varchar(50) | YES  |     | NULL    |       |
+| age      | int(3)      | YES  |     | NULL    |       |
 +----------+-------------+------+-----+---------+-------+
-3 rows in set (0.00 sec)
+4 rows in set (0.00 sec)
 ```
+
+insert some dummy data using the bash scripts, which are in **jenkins-ansible**
+copy those **people.txt** and **put.sh** into the db container /tmp directory and execute to populate to databases.
+
+```
+cd jenkins-ansible
+docker cp people.txt db:/tmp
+docker cp put.sh db:/tmp
+```
+
+Once you have executed, login to the db container and check for the data. 
+
+```
+mysql -u root -p1234
+show databases;
+use people;
+select * from register;
+```
+
+### Using Jenkins to display people database using webserver/php
+
+We would be required to create a new webserver which displays based on the age of the people. 
+
+```
+  web:
+    container_name: web
+    image: ansible-web
+    build:
+      context: jenkins_ansible/web
+    ports:
+      - "80:80"
+    networks:
+      - net
+```
+
+Build and create container for web
+
+```
+docker-compose build
+docker-compose up -d 
+```
+
+playbooks are copied to **/var/jenkins_home/ansible** and we would be required to configure a new project in the jenkins job which is parameterized in the playbook
+
+```
+docker cp people.yml jenkins:/var/jenkins_home/ansible
+docker cp table.j2 jenkins:/var/jenkins_home/ansible
+```
+
+```
+$sql = "SELECT id, name, lastname, age FROM register {% if PEOPLE_AGE is defined %} where age = {{ PEOPLE_AGE }} {% endif %}";
+```
+
+The above one would be asked to select the age from the jenkins machine and based on which the template for the config would be run from ansible to be placed in the remote host in the **/var/www/html/index.php** page which you can display using the IP http://jenkins.local 
+
+
+
+
+
+
