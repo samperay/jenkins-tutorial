@@ -125,3 +125,53 @@ Now, you would install plugins for **ansible** and **ansicolor** from the Jenkin
         msg: "{{ MSG }}" 
 ```
 
+### Create Database and tables from Mysql 
+
+Login to your **db** container and create database, tables and insert values to it. 
+
+```
+[jenkins@localhost ~]$ docker exec -it db bash
+root@bc4ba9246f24:/# mysql -u root -p
+Enter password:
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 2
+Server version: 5.7.34 MySQL Community Server (GPL)
+
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.14 sec)
+
+mysql> create database people;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> use people;
+Database changed
+mysql> create table register(id int(3), name varchar(50), lastname varchar(50));
+Query OK, 0 rows affected (0.05 sec)
+mysql>
+
+mysql> desc register;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| id       | int(3)      | YES  |     | NULL    |       |
+| name     | varchar(50) | YES  |     | NULL    |       |
+| lastname | varchar(50) | YES  |     | NULL    |       |
++----------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+```
