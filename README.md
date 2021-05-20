@@ -231,6 +231,41 @@ $sql = "SELECT id, name, lastname, age FROM register {% if PEOPLE_AGE is defined
 
 The above one would be asked to select the age from the jenkins machine and based on which the template for the config would be run from ansible to be placed in the remote host in the **/var/www/html/index.php** page which you can display using the IP http://jenkins.local 
 
+### Jenkins Security
+
+You can create a role **dev** and assign the privileges to users who can read/write etc 
+You should always provide them with the read overall along with other read access for other job. 
+
+You could also provide them with project access so that they could only use that role. 
+
+### Jenins with Maven 
+
+Install the plugins for **Maven Integration** which would install **git** by default. 
+try to configure your project using an sample application for Maven **https://github.com/jenkins-docs/simple-java-maven-app.git** and run. 
+This also includes the **Jenkins** file which can be used to configure the pipeline. 
+
+### Creation of your own gitlab server 
+
+Create your own gitlab server
+```
+  git:
+    container_name: git-server
+    image: 'gitlab/gitlab-ce:latest'
+    hostname: 'gitlab.example.com'
+    ports:
+      - '8090:80'
+    volumes:
+      - '/srv/gitlab/config:/etc/gitlab'
+      - '/srv/gitlab/logs:/var/log/gitlab'
+      - '/srv/gitlab/data:/var/opt/gitlab'
+    networks:
+      - net
+```
+
+Make an entry **gitlab.example.com** in your /etc/hosts and then once the gitlab server is up, try to run using **htt://gitlab.example.com:8090** and create project and add repository and then create user and add them to the project. 
+
+On the Jenkins side, manage the add the credentials of the user to Jenkins and then change the settings of the URL in the Jenkins project which you have created. update it to **http://git:80** using the credentials. Now you can run the build which will connect to gitlab server and would be running the builds. 
+
 
 
 
