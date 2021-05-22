@@ -267,7 +267,17 @@ Make an entry **gitlab.example.com** in your /etc/hosts and then once the gitlab
 On the Jenkins side, manage the add the credentials of the user to Jenkins and then change the settings of the URL in the Jenkins project which you have created. update it to **http://git:80** using the credentials. Now you can run the build which will connect to gitlab server and would be running the builds. 
 
 
+### Create Docker in Jenkins Container
+yes, we would be creating Docker in the jenkins container. 
 
+
+
+### Jenkins Maven/Docker Builds
+
+
+```
+docker run --rm -it -v $PWD/java-app:/app -v /root/.m2:/root/.m2 -w /app maven:3.6.1-jdk-8-alpine sh
+```
 
 
 

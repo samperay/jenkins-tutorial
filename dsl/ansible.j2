@@ -1,0 +1,27 @@
+job('job_ansible_php_dsl') {
+
+    description('Retrive the data of people\'s age using PHP')
+
+  
+    parameters {
+        choiceParam('AGE', ['21', '22','23','24','25'])
+    }
+
+    steps {
+
+        wrappers {
+            colorizeOutput(colorMap = 'xterm')
+      }
+        ansiblePlaybook('/var/jenkins_home/ansible/people.yml') {
+            inventoryPath('/var/jenkins_home/ansible/hosts')
+            colorizedOutput(true)
+            extraVars {
+                extraVar("PEOPLE_AGE", '${AGE}', false)
+            }
+        }
+    }
+
+    publishers {
+        mailer('sunil4it@gmail.com', true, true)
+    }
+}
